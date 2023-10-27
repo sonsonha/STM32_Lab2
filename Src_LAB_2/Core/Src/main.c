@@ -224,13 +224,13 @@ int main(void)
   {
 	  if(timer1_flag == 1) {
 		  setTimer1(25);
-		  if(led_buffer[index_led] <= MAX_LED) {
+		  if(index_led + 1 <= MAX_LED) {
 		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		  update7SEG(index_led);
 		  display7SEG(led_buffer[index_led]);
 		  index_led++;
 		  }
-		  if(led_buffer[index_led] > MAX_LED) {
+		  if(index_led + 1 > MAX_LED) {
 			  index_led = 0;
 		  }
 	  }
