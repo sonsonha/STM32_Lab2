@@ -195,25 +195,17 @@ int main(void)
 			}
 		}
 	void updateClockBuffer() {
-//		led_buffer[0] = hour/10;
-//		led_buffer[1] = hour%10;
-//		led_buffer[2] = minute/10;
-//		led_buffer[3] = minute%10;
+		led_buffer[0] = hour/10;
+		led_buffer[1] = hour%10;
+		led_buffer[2] = minute/10;
+		led_buffer[3] = minute%10;
 		if (hour <= 9) {
 			led_buffer[0] = 0;
 			led_buffer[1] = hour;
 		}
-		if (hour > 9) {
-			led_buffer[0] = hour/10;
-			led_buffer[1] = hour%10;
-		}
 		if (minute <= 9) {
 			led_buffer[2] = 0;
 			led_buffer[3] = minute;
-		}
-		if (minute > 9) {
-			led_buffer[2] = minute/10;
-			led_buffer[3] = minute%10;
 		}
 	}
   /* USER CODE END 1 */
@@ -245,9 +237,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   setTimer1(25);
   setTimer2(100);
-//   int hour = 15;
-//   int minute = 8;
-//   int second = 50;
   while (1)
   {
 	  if(timer1_flag == 1) {
