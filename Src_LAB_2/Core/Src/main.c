@@ -218,11 +218,12 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(100);
+  setTimer1(25);
+  setTimer2(100);
   while (1)
   {
 	  if(timer1_flag == 1) {
-		  setTimer1(100);
+		  setTimer1(25);
 		  if(led_buffer[index_led] <= MAX_LED) {
 		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 		  update7SEG(index_led);
@@ -232,6 +233,10 @@ int main(void)
 		  if(led_buffer[index_led] > MAX_LED) {
 			  index_led = 0;
 		  }
+	  }
+	  if(timer2_flag == 1) {
+		  setTimer2(100);
+		  HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
 	  }
 
     /* USER CODE END WHILE */
