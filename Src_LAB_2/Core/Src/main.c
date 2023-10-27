@@ -66,6 +66,16 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+	const int MAX_LED_MATRIX = 8;
+	int index_led_matrix = 0;
+	uint8_t matrix_buffer[8] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+	void updateLEDMatrix(int index) {
+		switch (index){
+		case 0:
+
+		}
+	}
+
 	const int MAX_LED = 4;
 	int index_led = 0;
 	int led_buffer[4] = {1, 5, 0, 8};
