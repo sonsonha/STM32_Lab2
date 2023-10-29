@@ -227,6 +227,7 @@ int main(void)
 			break;
 		}
 	}
+
 	void display7SEG ( int num) {
 			switch (num) {
 				case 0:
