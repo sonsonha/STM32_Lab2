@@ -68,53 +68,68 @@ int main(void)
   /* USER CODE BEGIN 1 */
 	const int MAX_LED_MATRIX = 8;
 	int index_led_matrix = 0;
-	uint16_t matrix_buffer[8] = {0x0700, 0x0300, 0xC900, 0xCC00, 0xCC00, 0xC900, 0x0300, 0x0700};
+	uint16_t matrix_buffer[8] = {0xFF00, 0x0100, 0x0000, 0xEE00, 0xEE00, 0x0000, 0x0100, 0xFF00};
 	void updateLEDMatrix(int index)
 	{
 		GPIOB -> ODR = matrix_buffer[index];
 		switch (index)
 		{
 			case 0:
-				HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, RESET);
-				HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, SET);
-				HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, SET);
-				HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, SET);
-				HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, SET);
-				HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, SET);
-				HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, SET);
-				HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, SET);
+				HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, 0);
+				HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, 1);
 				break;
 			case 1:
-				HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, RESET);
-				HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, SET);
+				HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, 0);
+				HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, 1);
 				break;
 			case 2:
-				HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, RESET);
-				HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, SET);
+				HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, 0);
+				HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, 1);
 				break;
 			case 3:
-				HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, RESET);
-				HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, SET);
+				HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, 0);
+				HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, 1);
 				break;
 			case 4:
-				HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, RESET);
-				HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, SET);
+				HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, 0);
+				HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, 1);
 				break;
 			case 5:
-				HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, RESET);
-				HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, SET);
+				HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, 0);
+				HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, 1);
 				break;
 			case 6:
-				HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, RESET);
-				HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, SET);
+				HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, 0);
+				HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, 1);
 				break;
 			case 7:
-				HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, RESET);
-				HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, SET);
+				HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, 0);
+				HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, 1);
 				break;
 			default:
 				break;
 		}
+	}
+	void shiftMatrix()
+	{
+		uint16_t temp = matrix_buffer[7];
+		for (int i = 7; i >= 1; i--)
+		{
+			matrix_buffer[i] = matrix_buffer[i - 1];
+		}
+		matrix_buffer[0]= temp;
+	}
+	void unEnableAllGPIOB()
+	{
+		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, 1);
+		HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, 1);
+		HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, 1);
+		HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, 1);
+		HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, 1);
+		HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, 1);
+		HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, 1);
+		HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, 1);
+
 	}
 
 
@@ -288,48 +303,21 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(25);
-  setTimer2(100);
-  setTimer3(25);
+  setTimer2(3);
+  int index = 0;
+  unEnableAllGPIOB();
   while (1)
   {
-	  if(timer1_flag == 1) {
-		  setTimer1(25);
-		  if(index_led + 1 <= MAX_LED) {
-		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-		  update7SEG(index_led);
-		  display7SEG(led_buffer[index_led]);
-		  index_led++;
-		  }
-		  if(index_led + 1 > MAX_LED) {
-			  index_led = 0;
-		  }
-	  }
-	  if(timer2_flag == 1) {
-		  HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
-		  second++;
-		  if(second >= 60) {
-			  second = 0;
-			  minute++;
-		  }
-		  if(minute >= 60) {
-			  minute = 0;
-			  hour++;
-		  }
-		  if(hour >= 24) {
-			  hour = 0;
-		  }
-		  updateClockBuffer();
-		  setTimer2(100);
-	  }
-	  if(timer3_flag == 1) {
-		  setTimer3(25);
-		  if(index_led_matrix + 1 <= MAX_LED_MATRIX) {
-			  updateLEDMatrix(index_led_matrix);
-			  index_led_matrix++;
-		  }
-		  if(index_led_matrix + 1> MAX_LED_MATRIX) {
-			  index_led_matrix = 0;
-		  }
+	  if (timer1_flag == 1)
+	  {
+		 if (index > 7) index = 0;
+		 updateLEDMatrix(index++);
+		 setTimer1(25);
+  	  }
+	  if (timer2_flag == 1)
+	  {
+		  shiftMatrix();
+		  setTimer2(3);
 	  }
 
     /* USER CODE END WHILE */
