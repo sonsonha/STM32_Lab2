@@ -58,7 +58,10 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 4;
 int index_led = 0;
-int led_buffer[4] = {1, 2, 3, 4};
+int led_buffer[4] = {1, 5, 0, 8};
+int hour = 15;
+int minute = 8;
+int second = 50;
 void update7SEG( int index) {
 	switch (index) {
 	case 0:
@@ -181,6 +184,20 @@ void display7SEG ( int num) {
 						break;
 		}
 	}
+void updateClockBuffer() {
+	led_buffer[0] = hour/10;
+	led_buffer[1] = hour%10;
+	led_buffer[2] = minute/10;
+	led_buffer[3] = minute%10;
+	if (hour <= 9) {
+		led_buffer[0] = 0;
+		led_buffer[1] = hour;
+	}
+	if (minute <= 9) {
+		led_buffer[2] = 0;
+		led_buffer[3] = minute;
+	}
+}
 /* USER CODE END 0 */
 
 /**
@@ -218,21 +235,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  setTimer1(100);
+
   while (1)
   {
-	  if(timer1_flag == 1) {
-		  setTimer1(100);
-		  if(led_buffer[index_led] <= MAX_LED) {
-		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-		  update7SEG(index_led);
-		  display7SEG(led_buffer[index_led]);
-		  index_led++;
-		  }
-		  if(led_buffer[index_led] > MAX_LED) {
-			  index_led = 0;
-		  }
-	  }
 
     /* USER CODE END WHILE */
 
@@ -366,7 +371,41 @@ static void MX_GPIO_Init(void)
 int counter1 = 25;
 int counter2 = 50;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
-
+		if (counter1 > 0) {
+			counter1--;
+		}
+		if (counter2 > 0) {
+			counter2--;
+		}
+		if(counter1 <= 0) {
+		  counter1 = 25;
+		  if(index_led + 1 <= MAX_LED) {
+		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+		  update7SEG(index_led);
+		  display7SEG(led_buffer[index_led]);
+		  index_led++;
+		  }
+		  if(index_led + 1 > MAX_LED) {
+			  index_led = 0;
+		  }
+		}
+		if(counter2 <= 0) {
+		  HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
+		  second++;
+		  if(second >= 60) {
+			  second = 0;
+			  minute++;
+		  }
+		  if(minute >= 60) {
+			  minute = 0;
+			  hour++;
+		  }
+		  if(hour >= 24) {
+			  hour = 0;
+		  }
+		  updateClockBuffer();
+		  counter2 = 100;
+		}
 }
 /* USER CODE END 4 */
 
