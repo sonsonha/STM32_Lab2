@@ -110,18 +110,6 @@ int main(void)
 				break;
 		}
 	}
-	void unEnableAllGPIOB()
-	{
-		HAL_GPIO_WritePin(ENM0_GPIO_Port, ENM0_Pin, 1);
-		HAL_GPIO_WritePin(ENM1_GPIO_Port, ENM1_Pin, 1);
-		HAL_GPIO_WritePin(ENM2_GPIO_Port, ENM2_Pin, 1);
-		HAL_GPIO_WritePin(ENM3_GPIO_Port, ENM3_Pin, 1);
-		HAL_GPIO_WritePin(ENM4_GPIO_Port, ENM4_Pin, 1);
-		HAL_GPIO_WritePin(ENM5_GPIO_Port, ENM5_Pin, 1);
-		HAL_GPIO_WritePin(ENM6_GPIO_Port, ENM6_Pin, 1);
-		HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, 1);
-
-	}
 
 
 	const int MAX_LED = 4;
@@ -296,8 +284,6 @@ int main(void)
   setTimer1(25);
   setTimer2(100);
   setTimer3(25);
-  int index = 0;
-  unEnableAllGPIOB();
   while (1)
   {
 	  if(timer1_flag == 1) {
@@ -329,12 +315,16 @@ int main(void)
 		  updateClockBuffer();
 		  setTimer2(100);
 	  }
-	  if (timer3_flag == 1)
-	  {
-		 if (index > 7) index = 0;
-		 updateLEDMatrix(index++);
-		 setTimer3(25);
-  	  }
+	  if(timer3_flag == 1) {
+		  setTimer3(25);
+		  if(index_led_matrix + 1 <= MAX_LED_MATRIX) {
+			  updateLEDMatrix(index_led_matrix);
+			  index_led_matrix++;
+		  }
+		  if(index_led_matrix + 1> MAX_LED_MATRIX) {
+			  index_led_matrix = 0;
+		  }
+	  }
 
     /* USER CODE END WHILE */
 
