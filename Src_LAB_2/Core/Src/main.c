@@ -78,7 +78,7 @@ int main(void)
 	}
 	const int MAX_LED_MATRIX = 8;
 	int index_led_matrix = 0;
-	uint16_t matrix_buffer[8] = {0x0700, 0x0300, 0xC900, 0xCC00, 0xCC00, 0xC900, 0x0300, 0x0700};
+	uint16_t matrix_buffer[8] = {0x0000, 0x0000, 0xE700, 0xE700, 0xE700, 0xE700, 0x0000, 0x0000};
 	void updateLEDMatrix(int index)
 	{
 		GPIOB -> ODR = matrix_buffer[index];
@@ -264,6 +264,18 @@ int main(void)
 			led_buffer[3] = minute;
 		}
 	}
+	void shiftMatrixLeft()
+	{
+	    uint16_t temp = matrix_buffer[0];
+
+	    for (int i = 0; i < MAX_LED_MATRIX - 1; i++)
+	    {
+	        matrix_buffer[i] = matrix_buffer[i + 1];
+	    }
+
+	    matrix_buffer[MAX_LED_MATRIX - 1] = temp;
+	}
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -293,8 +305,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   setTimer1(25);
   setTimer2(100);
-  setTimer3(25);
-  setTimer4(3);
+  setTimer3(30);
+  setTimer4(240);
   while (1)
   {
 	  if(timer1_flag == 1) {
@@ -327,7 +339,7 @@ int main(void)
 		  setTimer2(100);
 	  }
 	  if(timer3_flag == 1) {
-		  setTimer3(25);
+		  setTimer3(30);
 		  if(index_led_matrix + 1 <= MAX_LED_MATRIX) {
 			  updateLEDMatrix(index_led_matrix);
 			  index_led_matrix++;
@@ -335,6 +347,10 @@ int main(void)
 		  if(index_led_matrix + 1 > MAX_LED_MATRIX) {
 			  index_led_matrix = 0;
 		  }
+	  }
+	  if(timer4_flag == 1) {
+		  setTimer4(240);
+		  shiftMatrixLeft();
 	  }
 
     /* USER CODE END WHILE */
