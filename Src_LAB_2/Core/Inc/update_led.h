@@ -9,6 +9,6 @@
 #define INC_UPDATE_LED_H_
 
 void display7SEG ( int num);
-
+void clearALL_7SEG ();
 
 #endif /* INC_UPDATE_LED_H_ */
