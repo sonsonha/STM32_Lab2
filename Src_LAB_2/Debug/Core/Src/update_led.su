@@ -1,0 +1,2 @@
+update_led.c:11:7:display7SEG	16	static
+update_led.c:106:7:clearAll_7SEG	8	static
