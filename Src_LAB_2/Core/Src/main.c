@@ -77,7 +77,7 @@ int main(void)
 		HAL_GPIO_WritePin(ENM7_GPIO_Port, ENM7_Pin, SET);
 	}
 	const int MAX_LED_MATRIX = 8;
-	int index_led_matrix = MAX_LED_MATRIX - 1;
+	int index_led_matrix = 0;
 	uint16_t matrix_buffer[8] = {0x0700, 0x0300, 0xC900, 0xCC00, 0xCC00, 0xC900, 0x0300, 0x0700};
 	void updateLEDMatrix(int index)
 	{
@@ -120,13 +120,7 @@ int main(void)
 				break;
 		}
 	}
-	void run_Animation() {
-//		uint16_t temp = matrix_buffer[0];
-		for(int i = 0; i < 7; i++) {
-			matrix_buffer[i] = matrix_buffer[i + 1];
-		}
-//		matrix_buffer[7] = temp;
-	}
+
 
 	const int MAX_LED = 4;
 	int index_led = 0;
@@ -297,7 +291,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  clearAll_matrix();
   setTimer1(25);
   setTimer2(100);
   setTimer3(25);
@@ -335,17 +328,13 @@ int main(void)
 	  }
 	  if(timer3_flag == 1) {
 		  setTimer3(25);
-		  if(index_led_matrix >= 0) {
+		  if(index_led_matrix + 1 <= MAX_LED_MATRIX) {
 			  updateLEDMatrix(index_led_matrix);
-			  index_led_matrix--;
+			  index_led_matrix++;
 		  }
-		  if(index_led_matrix < 0) {
-			  index_led_matrix = MAX_LED_MATRIX - 1;
+		  if(index_led_matrix + 1 > MAX_LED_MATRIX) {
+			  index_led_matrix = 0;
 		  }
-	  }
-	  if(timer4_flag == 1) {
-		  setTimer4(3);
-		  run_Animation();
 	  }
 
     /* USER CODE END WHILE */
